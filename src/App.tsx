@@ -1,28 +1,32 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import styled, { createGlobalStyle } from 'styled-components'
+import Lights from './Lights'
+
+const GlobalStyle = createGlobalStyle`
+  body, html, #root {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: Helvetica Neue;
+    overflow: hidden;
+  }
+`
+
+const Wrapper = styled.div`
+  background: linear-gradient(to right, #4e4376, #2b5876);
+  min-height: 100vh;
+  overflow: auto;
+`
 
 class App extends Component {
-  render() {
+  public render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
+      <Wrapper>
+        <GlobalStyle />
+        <Lights />
+      </Wrapper>
+    )
   }
 }
 
-export default App;
+export default App
