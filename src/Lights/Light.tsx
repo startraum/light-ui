@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
+import Slider from 'react-input-slider'
 import Power from '../icons/Power'
+import ColorWheel from './ColorWheel'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -8,6 +10,8 @@ const Wrapper = styled.div`
   margin: 25px 30px;
   border-radius: 20px;
   background-color: rgba(240, 240, 240, 0.15);
+  max-width: 500px;
+  box-shadow: 0px 3px 20px 0 rgba(28, 28, 28, .3);
 `
 const NameWrapper = styled.div`
   display: flex;
@@ -51,6 +55,7 @@ export default class Light extends Component<Type, State> {
             on={this.state.power}
           />
         </NameWrapper>
+        <ColorWheel />
       </Wrapper>
     )
   }
