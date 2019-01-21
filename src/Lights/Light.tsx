@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
-import Slider from 'react-input-slider'
+// import Slider from 'react-input-slider'
 import Power from '../icons/Power'
-import ColorWheel from './ColorWheel'
+import ColorWheel from './ColorWheel/index'
 
 const Wrapper = styled.div`
   width: 100%;
