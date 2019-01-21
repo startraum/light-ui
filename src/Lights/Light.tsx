@@ -28,7 +28,8 @@ const Name = styled.h2`
 export interface Type {
   id: string
   name: string
-  color: string
+  hue: number
+  lightness: number
   power: boolean
   intensity: number
   classes?: any
@@ -36,12 +37,16 @@ export interface Type {
 export interface State {
   power: boolean
   intensity: number
+  hue: number
+  lightness: number
 }
 
 export default class Light extends Component<Type, State> {
   public state = {
     power: this.props.power,
     intensity: this.props.intensity,
+    hue: this.props.hue,
+    lightness: this.props.lightness,
   }
 
   public render() {
@@ -55,7 +60,11 @@ export default class Light extends Component<Type, State> {
             on={this.state.power}
           />
         </NameWrapper>
-        <ColorWheel />
+        <ColorWheel
+          hue={this.state.hue}
+          lightness={this.state.lightness}
+          onChange={(hue, lightness) => this.setState({ hue, lightness })}
+        />
       </Wrapper>
     )
   }

@@ -60,8 +60,9 @@ const Rotate: AnyStyledComponent = styled.div`
 
 export interface Props {
   size?: number
-  hue?: number
-  lightness?: number
+  hue: number
+  lightness: number
+  onChange: (hue: number, saturation: number, lightness: number) => void
   generateCanvas?: CanvasGenerator
 }
 
@@ -116,9 +117,9 @@ export default class ColorWheel extends Component<Props, State> {
   public canvas?: HTMLCanvasElement
   public backgroundUrl?: string
   public state = {
-    lightness: this.props.lightness || 50,
-    hue: this.props.hue || 0,
-    color: Color.hsl(this.props.hue || 0, 100, this.props.lightness || 50).hex(),
+    lightness: this.props.lightness,
+    hue: this.props.hue,
+    color: Color.hsl(this.props.hue, 100, this.props.lightness).hex(),
     dragging: false,
   }
 
@@ -170,6 +171,7 @@ export default class ColorWheel extends Component<Props, State> {
     const { hue, lightness } = this.state
     const values = { hue, lightness, ...col }
     const color = Color.hsl(values.hue, 100, values.lightness).hex()
+    this.props.onChange(values.hue, 100, values.lightness)
     // @ts-ignore
     this.setState({ ...col, color })
   }

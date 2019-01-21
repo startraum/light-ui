@@ -29,7 +29,8 @@ export default class Lights extends Component {
     const lights: LightType[] = [{
       id: 'test',
       name: 'Testlampe',
-      color: '#00ff00',
+      hue: 10,
+      lightness: 80,
       power: true,
       intensity: 1,
     }]
