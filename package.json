@@ -20,6 +20,8 @@
     "start": "PORT=3800 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "now-build": "react-scripts build && mv build dist",
+    "now-deploy": "rm -rf build dist; npm run now-build && now",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -35,6 +37,7 @@
     "@types/color": "^3.0.0",
     "@types/styled-components": "^4.1.6",
     "babel-eslint": "^9.0.0",
+    "now": "^13.1.2",
     "tslint": "^5.12.1"
   }
 }
