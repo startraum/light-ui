@@ -6,7 +6,8 @@ const Section = styled.section`
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  min-height: 100vh;
+  flex-wrap: wrap;
+  min-height: 100%;
 `
 const Placeholder = styled.p`
   color: rgba(230,230,230,.3);
@@ -27,12 +28,27 @@ export default class Lights extends Component {
 
   private renderLights() {
     const lights: LightType[] = [{
-      id: 'test',
-      name: 'Testlampe',
+      id: 'test1',
+      name: 'Testlampe 1',
       hue: 10,
       lightness: 80,
       power: true,
-      intensity: 1,
+      intensity: 100,
+      lastColors: [{
+        hue: 10,
+        lightness: 80,
+      }, {
+        hue: 170,
+        lightness: 60,
+      }],
+    }, {
+      id: 'test2',
+      name: 'Testlampe 2',
+      hue: 70,
+      lightness: 50,
+      power: false,
+      intensity: 80,
+      lastColors: [],
     }]
     if (lights.length <= 0) return <Placeholder>no lights available</Placeholder>
     return lights.map(light => <Light key={light.id} {...light} />)

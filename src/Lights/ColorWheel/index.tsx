@@ -15,6 +15,8 @@ const Wrapper: AnyStyledComponent = styled.div<{ size: number }>`
   position: relative;
   border: 1px solid rgba(64, 64, 64, 0.6);
   box-shadow: 0px 3px 20px 0 rgba(28, 28, 28, .3);
+  cursor: grab;
+  box-sizing: border-box;
 `
 const BackgroundHelper = styled.div.attrs<{ backgroundUrl: string, rotation: number }>({
   style: (p: any) => ({ transform: `translateZ(0) translate3d(0, 0, 0) rotate(${p.rotation}deg)` }),
@@ -27,14 +29,16 @@ const BackgroundHelper = styled.div.attrs<{ backgroundUrl: string, rotation: num
   background-size: 100%;
   perspective: 1000;
 `
-const ChildWrapper = styled.div.attrs<{ color: string, dragging: boolean }>({
-  style: (p: any) => {
-    return {
-      backgroundColor: p.color,
-      color: getContrastColor(p.color).alpha(0.4).toString(),
-    }
+const ChildWrapper = styled.span.attrs<{ color: string, dragging: boolean }>(p => ({
+  children: 'done',
+  style: {
+    backgroundColor: p.color,
+    color: getContrastColor(p.color).alpha(0.4).toString(),
   },
-})<{ color: string, dragging: boolean }>`
+}))<{ color: string, dragging: boolean }>`
+  outline: none;
+  cursor: pointer;
+  border: 0;
   position: absolute;
   top: 30%;
   left: 30%;
@@ -64,6 +68,8 @@ export interface Props {
   lightness: number
   onChange: (hue: number, saturation: number, lightness: number) => void
   generateCanvas?: CanvasGenerator
+  className?: string
+  onClose: () => void
 }
 
 interface State {
@@ -77,13 +83,12 @@ export default class ColorWheel extends Component<Props, State> {
   public static defaultProps = {
     size: 250,
     lightness: 100,
-    children: 'done',
     generateCanvas(size: number) {
       const canvas = document.createElement('canvas')
       canvas.width = size * 2
       canvas.height = size * 2
-      canvas.style.width = `§{size}px`
-      canvas.style.height = `§{size}px`
+      canvas.style.width = `${size}px`
+      canvas.style.height = `${size}px`
       const context = canvas.getContext('2d') as CanvasRenderingContext2D
       context.scale(2, 2)
       context.scale(2, 2)
@@ -146,6 +151,7 @@ export default class ColorWheel extends Component<Props, State> {
       <Wrapper
         ref={this.wrapperRef}
         size={this.props.size as number}
+        className={this.props.className}
       >
         <BackgroundHelper
           backgroundUrl={this.backgroundUrl as string}
@@ -162,7 +168,11 @@ export default class ColorWheel extends Component<Props, State> {
         <ChildWrapper
           color={this.state.color}
           dragging={this.state.dragging}
-        >{this.props.children}</ChildWrapper>
+          onClick={event => {
+            event.stopPropagation()
+            this.props.onClose()
+          }}
+        />
       </Wrapper>
     )
   }

@@ -15,13 +15,15 @@ const GlobalStyle = createGlobalStyle`
     overflow: hidden;
     color: rgba(254, 254, 254, 0.87);
     user-select: none;
+    touch-action: manipulation;
   }
 `
 
 const Wrapper = styled.div`
   background: linear-gradient(to right, #4e4376, #2b5876);
-  min-height: 100%;
+  height: 100%;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 `
 
 class App extends Component {
