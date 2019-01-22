@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import update from 'immutability-helper'
 
 export const lastColorCount = 4
+const colorTolerance = 50
 
 export interface Change {
   hue?: number
@@ -103,8 +104,17 @@ export default function connect(Comp: any) {
       this.updateLight(index, l => {
         const { hue, lightness } = l
         const lastColors = l.lastColors
-        if (!lastColors.filter(c => c.hue === hue && c.lightness === lightness)[0]) {
+        let similarIndex: number | undefined
+        const similarColors = lastColors.filter((c, colorIndex) => {
+          const match = (c.hue + colorTolerance >= hue && c.hue - colorTolerance <= hue) &&
+          (c.lightness + colorTolerance >= lightness && c.lightness - colorTolerance <= lightness)
+          if (match) similarIndex = colorIndex
+          return match
+        })
+        if (similarColors.length <= 0) {
           lastColors.unshift({ hue: l.hue, lightness: l.lightness })
+        } else if (similarIndex != null) {
+          lastColors[similarIndex] = { hue: l.hue, lightness: l.lightness }
         }
 
         return {
@@ -128,6 +138,7 @@ export default function connect(Comp: any) {
         onPersistColor: () => this.persistColor(index),
         onChange: (change: Change) => this.updateLight(index, l => ({
           ...l,
+          power: true,
           ...change,
         })),
       }))
