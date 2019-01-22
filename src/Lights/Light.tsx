@@ -11,7 +11,7 @@ const Wrapper = styled.div<{ on: boolean }>`
   transition-duration: .3s;
   width: 100%;
   padding: 20px 20px 20px;
-  margin: 25px 30px;
+  margin: 15px;
   border-radius: 20px;
   background-color: rgba(240, 240, 240, 0.15);
   max-width: 500px;
