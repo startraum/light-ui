@@ -32,7 +32,7 @@ export interface LightWithChange extends Light {
 
 const initialData = [{
   id: 'test1',
-  name: 'Testlampe 1',
+  name: 'Eingang',
   hue: 10,
   lightness: 80,
   power: true,
@@ -46,12 +46,41 @@ const initialData = [{
   }],
 }, {
   id: 'test2',
-  name: 'Testlampe 2',
+  name: 'Coworking',
   hue: 70,
   lightness: 50,
   power: false,
   intensity: 80,
-  lastColors: [],
+  lastColors: [{
+    hue: 363,
+    lightness: 75,
+  }, {
+    hue: 45,
+    lightness: 53,
+  }, {
+    hue: 79,
+    lightness: 64,
+  }],
+}, {
+  id: 'test3',
+  name: 'Factory',
+  hue: 250,
+  lightness: 50,
+  power: false,
+  intensity: 40,
+  lastColors: [{
+    hue: 179,
+    lightness: 49,
+  }, {
+    hue: 283,
+    lightness: 67,
+  }, {
+    hue: 320,
+    lightness: 71,
+  }, {
+    hue: 170,
+    lightness: 100,
+  }],
 }]
 
 export default function connect(Comp: any) {
