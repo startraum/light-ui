@@ -2,30 +2,29 @@ import React, { Component } from 'react'
 import styled, { css } from 'styled-components'
 import Color from 'color'
 import Power from '../icons/Power'
+import Slider from './Slider'
 import UnstyledColorWheel from './ColorWheel/index'
 
 const lastColorCount = 4
 
-const Wrapper = styled.div<{ on: boolean, colorWheelOpened: boolean }>`
+const Wrapper = styled.div<{ on: boolean }>`
   opacity: ${p => p.on ? 1 : 0.5};
   transition-duration: .3s;
   width: 100%;
-  padding: 10px 15px 20px;
+  padding: 20px 20px 20px;
   margin: 25px 30px;
   border-radius: 20px;
   background-color: rgba(240, 240, 240, 0.15);
   max-width: 500px;
   box-shadow: 0px 3px 20px 0 rgba(28, 28, 28, .3);
   position: relative;
-  max-height: ${p => p.colorWheelOpened ? '450' : '150'}px;
   box-sizing: border-box;
-  transition-delay: ${p => p.colorWheelOpened ? 0 : 0}s;
   overflow: hidden;
 `
 const NameWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 `
 const Name = styled.h2`
   flex: 1;
@@ -50,6 +49,7 @@ const ColorDot = styled.button<{ active: boolean, color?: string, disabled?: boo
   cursor: ${p => p.disabled ? 'auto' : 'pointer'};
   background: ${p => !p.invisible ? p.color || 'rgba(228, 228, 228, .1)' : 'none'};
   box-shadow: ${p => p.invisible ? 'none' : `0px 3px 20px 0 rgba(28, 28, 28, ${p.disabled ? '.1' : '.3'})`};
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 `
 const ColorWheel = styled(UnstyledColorWheel)``
 const activeStyle = css`
@@ -69,10 +69,10 @@ const ColorWheelWrapper = styled.div<{ active: boolean }>`
   align-items: center;
   pointer-events: none;
   margin-top: 0;
-  transition: opacity 0.3s ease ${p => p.active ? 0 : 0}s, height 0.3s ease ${p => p.active ? 0 : 0}s, margin-top 0.3s ease ${p => p.active ? 0 : 0}s;
+  transition: opacity 0.3s ease ${p => p.active ? 0.1 : 0}s, height 0.3s ease ${p => p.active ? 0 : 0.1}s, margin-top 0.3s ease ${p => p.active ? 0 : 0.1}s;
   ${ColorWheel} {
     transition-duration: 0.3s;
-    transition-delay: ${p => p.active ? 0 : 0}s;
+    transition-delay: ${p => p.active ? 0.1 : 0}s;
     transform: scale(0.01);
   }
   ${p => p.active && activeStyle};
@@ -155,16 +155,23 @@ export default class Light extends Component<Type, State> {
 
   public render() {
     return (
-      <Wrapper on={this.state.power} colorWheelOpened={this.state.colorWheelOpened}>
+      <Wrapper on={this.state.power}>
         <NameWrapper>
           <Name>{this.props.name}</Name>
           <Power
-            size={60}
+            size={50}
             onClick={() => this.setState(state => ({ power: !state.power }))}
             on={this.state.power}
           />
         </NameWrapper>
         {this.renderColors()}
+        <Slider
+          formatLabel={(value: string) => `${value}%`}
+          minValue={0}
+          maxValue={100}
+          value={this.state.intensity}
+          onChange={(intensity: number) => this.setIntensity(intensity)}
+        />
         <ColorWheelWrapper active={this.state.colorWheelOpened}>
           <ColorWheel
             hue={this.state.hue}
@@ -192,7 +199,7 @@ export default class Light extends Component<Type, State> {
     return (
       <ColorDotContainer>
         <ColorWheelButton
-          onClick={() => this.setState({ colorWheelOpened: true })}
+          onClick={() => this.setState({ colorWheelOpened: !this.state.colorWheelOpened })}
           active={this.state.colorWheelOpened}
         />
         {[...(new Array(lastColorCount)).keys()].map((index: number) => {

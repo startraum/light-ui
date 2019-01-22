@@ -70,15 +70,18 @@ export default class Lightness extends Component<Props> {
   }
 
   private handleTouchMove = (event: TouchEvent) => {
+    if (!this.isDragging) return
+    event.preventDefault()
     this.handleMove((event.touches.item(0) as Touch).clientY)
   }
 
   private handleMouseMove = (event: MouseEvent) => {
+    if (!this.isDragging) return
+    event.preventDefault()
     this.handleMove(event.clientY)
   }
 
   private handleMove(eventPosition: number) {
-    if (!this.isDragging) return
     // @ts-ignore
     const { y: wrapperPosition } = (this.wrapperRef.current as HTMLElement).getBoundingClientRect()
     const height = this.props.size - handleSize
