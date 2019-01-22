@@ -117,11 +117,7 @@ export default function connect(Comp: any) {
     private updateLight(index: number, change: (light: Light) => Light) {
       this.setState(state => update(state, {
         lights: {
-          [index]: (light: Light) => {
-            const newLight = change(light)
-            console.log(index, newLight)
-            return newLight
-          },
+          [index]: (light: Light) => change(light),
         },
       }))
     }

@@ -7,27 +7,33 @@ import Lightness from './Lightness'
 import getContrastColor from '../../utils/getContrastColor'
 
 export type CanvasGenerator = (size: number) => HTMLCanvasElement
+const transitionDuration = 400
 
+const BackgroundHelper = styled.div.attrs<{ backgroundUrl: string, rotation: number, active: boolean, animating: boolean }>({
+  style: (p: any) => ({ transform: `translateZ(0) translate3d(0, 0, 0) rotate(${p.rotation + (p.active ? 0 : 360)}deg) scale(${p.active ? 1 : 0})` }),
+})<{ backgroundUrl: string, rotation: number, active: boolean, animating: boolean }>`
+  ${p => p.animating ? `transition-duration: ${transitionDuration - 100}ms;` : ''}
+  // transition-duration: ${transitionDuration - 100}ms;
+  ${p => p.active && p.animating ? 'transition-delay: 100ms;' : ''}
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background: url(${p => p.backgroundUrl}) no-repeat;
+  background-size: 100%;
+  perspective: 1000;
+  border-radius: 50%;
+  box-sizing: border-box;
+  border: 1px solid rgba(64, 64, 64, 0.6);
+  box-shadow: 0px 3px 20px 0 rgba(28, 28, 28, .3);
+`
 const Wrapper: AnyStyledComponent = styled.div<{ size: number }>`
   width: ${p => p.size}px;
   height: ${p => p.size}px;
   border-radius: 50%;
   position: relative;
-  border: 1px solid rgba(64, 64, 64, 0.6);
-  box-shadow: 0px 3px 20px 0 rgba(28, 28, 28, .3);
   cursor: grab;
   box-sizing: border-box;
-`
-const BackgroundHelper = styled.div.attrs<{ backgroundUrl: string, rotation: number }>({
-  style: (p: any) => ({ transform: `translateZ(0) translate3d(0, 0, 0) rotate(${p.rotation}deg)` }),
-})<{ backgroundUrl: string, rotation: number }>`
-  pointer-events: none;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  background-image: url(${p => p.backgroundUrl});
-  background-size: 100%;
-  perspective: 1000;
 `
 const ChildWrapper = styled.span.attrs<{ color: string, dragging: boolean }>(p => ({
   children: 'done',
@@ -70,10 +76,12 @@ export interface Props {
   generateCanvas?: CanvasGenerator
   className?: string
   onClose: () => void
+  active: boolean
 }
 
 interface State {
   dragging: boolean
+  animating: boolean
 }
 
 export default class ColorWheel extends Component<Props, State> {
@@ -120,19 +128,26 @@ export default class ColorWheel extends Component<Props, State> {
   public backgroundUrl?: string
   public state = {
     dragging: false,
+    animating: false,
   }
 
   private wrapperRef = React.createRef<AnyStyledComponent>()
   private rotatorRef = React.createRef<AnyStyledComponent>()
   private rotator?: any
+  private timeoutId?: any
 
   public componentWillMount() {
     this.canvas = (this.props.generateCanvas as CanvasGenerator)(this.props.size as number)
     this.backgroundUrl = this.canvas.toDataURL('image/png', 1)
   }
 
-  public componentWillReceiveProps({ hue }: Props) {
+  public componentWillReceiveProps({ hue, active }: Props) {
     this.rotator.angle = hue - 180
+    if (active !== this.props.active) {
+      clearTimeout(this.timeoutId)
+      this.setState({ animating: true })
+      this.timeoutId = setTimeout(() => this.setState({ animating: false }), transitionDuration)
+    }
   }
 
   public componentDidMount() {
@@ -151,10 +166,14 @@ export default class ColorWheel extends Component<Props, State> {
         ref={this.wrapperRef}
         size={this.props.size as number}
         className={this.props.className}
+        active={this.props.active}
+        animating={this.state.animating}
       >
         <BackgroundHelper
           backgroundUrl={this.backgroundUrl as string}
           rotation={this.props.hue - 180}
+          active={this.props.active}
+          animating={this.state.animating}
         />
         <Rotate ref={this.rotatorRef} />
         <Lightness

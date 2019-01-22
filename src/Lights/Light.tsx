@@ -151,6 +151,7 @@ export default class Light extends Component<LightWithChange, State> {
         <ColorWheelWrapper active={this.state.colorWheelOpened}>
           <ColorWheel
             hue={this.props.hue}
+            active={this.state.colorWheelOpened}
             lightness={this.props.lightness}
             onChange={(hue, saturation, lightness) => this.setColor({ hue, lightness })}
             onClose={() => this.closeWheel()}
