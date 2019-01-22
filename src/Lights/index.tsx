@@ -1,6 +1,7 @@
-import React, { Component } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import Light, { Type as LightType } from './Light'
+import Light from './Light'
+import connect, { LightWithChange } from '../lightState'
 
 const Section = styled.section`
   display: flex;
@@ -17,40 +18,9 @@ const Placeholder = styled.p`
   text-align: center;
 `
 
-export default class Lights extends Component {
-  public render() {
-    return (
-      <Section>
-        {this.renderLights()}
-      </Section>
-    )
-  }
-
-  private renderLights() {
-    const lights: LightType[] = [{
-      id: 'test1',
-      name: 'Testlampe 1',
-      hue: 10,
-      lightness: 80,
-      power: true,
-      intensity: 100,
-      lastColors: [{
-        hue: 10,
-        lightness: 80,
-      }, {
-        hue: 170,
-        lightness: 60,
-      }],
-    }, {
-      id: 'test2',
-      name: 'Testlampe 2',
-      hue: 70,
-      lightness: 50,
-      power: false,
-      intensity: 80,
-      lastColors: [],
-    }]
-    if (lights.length <= 0) return <Placeholder>no lights available</Placeholder>
-    return lights.map(light => <Light key={light.id} {...light} />)
-  }
-}
+export default connect((props: { lights: LightWithChange[] }) => (
+  <Section>
+    {props.lights.length <= 0 && <Placeholder>no lights available</Placeholder>}
+    {props.lights.map(light => <Light key={light.id} {...light} />)}
+  </Section>
+))

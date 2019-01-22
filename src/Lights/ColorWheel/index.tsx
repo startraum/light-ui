@@ -73,9 +73,6 @@ export interface Props {
 }
 
 interface State {
-  lightness: number
-  hue: number
-  color?: string
   dragging: boolean
 }
 
@@ -122,9 +119,6 @@ export default class ColorWheel extends Component<Props, State> {
   public canvas?: HTMLCanvasElement
   public backgroundUrl?: string
   public state = {
-    lightness: this.props.lightness,
-    hue: this.props.hue,
-    color: Color.hsl(this.props.hue, 100, this.props.lightness).hex(),
     dragging: false,
   }
 
@@ -137,9 +131,13 @@ export default class ColorWheel extends Component<Props, State> {
     this.backgroundUrl = this.canvas.toDataURL('image/png', 1)
   }
 
+  public componentWillReceiveProps({ hue }: Props) {
+    this.rotator.angle = hue - 180
+  }
+
   public componentDidMount() {
     this.rotator = new Rotator(this.rotatorRef.current, {
-      angle: this.state.hue - 180, // initial angle
+      angle: this.props.hue - 180, // initial angle
       onRotate: (hue: number) => this.setColor({ hue: hue + 180 }),
       onDragStart: () => this.setState({ dragging: true }),
       onDragStop: () => this.setState({ dragging: false }),
@@ -147,6 +145,7 @@ export default class ColorWheel extends Component<Props, State> {
   }
 
   public render() {
+    const color = Color.hsl(this.props.hue, 100, this.props.lightness).hex()
     return (
       <Wrapper
         ref={this.wrapperRef}
@@ -155,18 +154,18 @@ export default class ColorWheel extends Component<Props, State> {
       >
         <BackgroundHelper
           backgroundUrl={this.backgroundUrl as string}
-          rotation={this.state.hue - 180}
+          rotation={this.props.hue - 180}
         />
         <Rotate ref={this.rotatorRef} />
         <Lightness
           size={(this.props.size as number) * 0.3}
           onChange={value => this.setColor({ lightness: 50 + (50 / 100 * value) })}
-          value={(100 / 50 * (this.state.lightness - 50))}
-          color={this.state.color || '#fff'}
+          value={(100 / 50 * (this.props.lightness - 50))}
+          color={color || '#fff'}
           onDraggingChange={dragging => this.setState({ dragging })}
         />
         <ChildWrapper
-          color={this.state.color}
+          color={color}
           dragging={this.state.dragging}
           onClick={event => {
             event.stopPropagation()
@@ -178,11 +177,8 @@ export default class ColorWheel extends Component<Props, State> {
   }
 
   private setColor(col: { hue?: number, lightness?: number }) {
-    const { hue, lightness } = this.state
+    const { hue, lightness } = this.props
     const values = { hue, lightness, ...col }
-    const color = Color.hsl(values.hue, 100, values.lightness).hex()
     this.props.onChange(values.hue, 100, values.lightness)
-    // @ts-ignore
-    this.setState({ ...col, color })
   }
 }

@@ -4,8 +4,7 @@ import Color from 'color'
 import Power from '../icons/Power'
 import Slider from './Slider'
 import UnstyledColorWheel from './ColorWheel/index'
-
-const lastColorCount = 4
+import { LightWithChange, Color as ColorType, lastColorCount } from '../lightState'
 
 const Wrapper = styled.div<{ on: boolean }>`
   opacity: ${p => p.on ? 1 : 0.5};
@@ -121,47 +120,24 @@ const ColorWheelButton = styled(props => <ColorDot {...props} />).attrs({
   background: url(${getWheelBackgroundImage(50)}) no-repeat;
   background-size: 100%;
 `
-
-export interface ColorType {
-  hue: number
-  lightness: number
-}
-export interface Type {
-  id: string
-  name: string
-  hue: number
-  lightness: number
-  power: boolean
-  intensity: number
-  classes?: any
-  lastColors: ColorType[]
-}
 export interface State {
-  power: boolean
-  intensity: number
-  hue: number
-  lightness: number
   colorWheelOpened: boolean,
 }
 
-export default class Light extends Component<Type, State> {
+export default class Light extends Component<LightWithChange, State> {
   public state = {
-    power: this.props.power,
-    intensity: this.props.intensity,
-    hue: this.props.hue,
-    lightness: this.props.lightness,
     colorWheelOpened: false,
   }
 
   public render() {
     return (
-      <Wrapper on={this.state.power}>
+      <Wrapper on={this.props.power}>
         <NameWrapper>
           <Name>{this.props.name}</Name>
           <Power
             size={50}
-            onClick={() => this.setState(state => ({ power: !state.power }))}
-            on={this.state.power}
+            onClick={() => this.setPower(!this.props.power)}
+            on={this.props.power}
           />
         </NameWrapper>
         {this.renderColors()}
@@ -169,37 +145,58 @@ export default class Light extends Component<Type, State> {
           formatLabel={(value: string) => `${value}%`}
           minValue={0}
           maxValue={100}
-          value={this.state.intensity}
+          value={this.props.intensity}
           onChange={(intensity: number) => this.setIntensity(intensity)}
         />
         <ColorWheelWrapper active={this.state.colorWheelOpened}>
           <ColorWheel
-            hue={this.state.hue}
-            lightness={this.state.lightness}
-            onChange={(hue, lightness) => this.setState({ hue, lightness })}
-            onClose={() => this.setState({ colorWheelOpened: false })}
+            hue={this.props.hue}
+            lightness={this.props.lightness}
+            onChange={(hue, saturation, lightness) => this.setColor({ hue, lightness })}
+            onClose={() => this.closeWheel()}
           />
         </ColorWheelWrapper>
       </Wrapper>
     )
   }
 
+  private closeWheel() {
+    this.setState({ colorWheelOpened: false })
+    this.props.onPersistColor()
+  }
+
+  private setPower(power: boolean) {
+    const change = { power }
+    this.props.onChange(change)
+  }
+
   private setIntensity(intensity: number) {
-    this.setState({
+    const change = {
       intensity,
       power: intensity > 0,
-    })
+    }
+    this.props.onChange(change)
+  }
+
+  private setColor(color: ColorType) {
+    this.props.onChange(color)
   }
 
   private isColorActive(color: { hue: number, lightness: number }) {
-    return color.hue === this.state.hue && color.lightness === this.state.lightness
+    return color.hue === this.props.hue && color.lightness === this.props.lightness
   }
 
   private renderColors() {
     return (
       <ColorDotContainer>
         <ColorWheelButton
-          onClick={() => this.setState({ colorWheelOpened: !this.state.colorWheelOpened })}
+          onClick={() => {
+            if (!this.state.colorWheelOpened) {
+              this.setState({ colorWheelOpened: true })
+              return
+            }
+            this.closeWheel()
+          }}
           active={this.state.colorWheelOpened}
         />
         {[...(new Array(lastColorCount)).keys()].map((index: number) => {
@@ -210,7 +207,7 @@ export default class Light extends Component<Type, State> {
               active={color && this.isColorActive(color)}
               color={color ? Color.hsl(color.hue, 100, color.lightness).hex() : ''}
               disabled={!color}
-              onClick={color ? () => this.setState({ hue: color.hue, lightness: color.lightness }) : undefined}
+              onClick={color ? () => this.setColor(color) : undefined}
             />
           )
         })}
