@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
+import dynamic from 'next/dynamic'
+import * as React from 'react'
 import styled, { createGlobalStyle } from 'styled-components'
-import Lights from './Lights'
 
 const GlobalStyle = createGlobalStyle`
-  body, html, #root {
+  body, html, #__next {
     position: fixed;
     top: 0;
     bottom: 0;
@@ -26,15 +26,14 @@ const Wrapper = styled.div`
   -webkit-overflow-scrolling: touch;
 `
 
-class App extends Component {
-  public render() {
-    return (
-      <Wrapper>
-        <GlobalStyle />
-        <Lights />
-      </Wrapper>
-    )
-  }
-}
+// @ts-ignore
+const Lights = dynamic(async () => import('../components/Lights'), {
+  ssr: false,
+})
 
-export default App
+export default () => (
+  <Wrapper>
+    <GlobalStyle />
+    <Lights />
+  </Wrapper>
+)
