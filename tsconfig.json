@@ -6,6 +6,9 @@
       "dom.iterable",
       "esnext"
     ],
+    "types": [
+      "webrtc"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
