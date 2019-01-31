@@ -7,7 +7,7 @@
       "semicolon": [true, "never"],
       "max-classes-per-file": false,
       "promise-function-async": true,
-      "no-floating-promises": [true, "Promise", "Bluebird"],
+      "no-floating-promises": false,
       "await-promise": [true, "Bluebird", "WebElementPromise"],
       "no-submodule-imports": [false, "aws-sdk", "selenium-webdriver"],
       "no-this-assignment": [true, {
