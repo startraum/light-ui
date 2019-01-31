@@ -32,7 +32,7 @@ export default styled(Power)`
   svg {
     width: 100%;
     height: 100%;
-    transition-duration: 0.2s
+    transition-duration: 0.2s;
     fill: ${p => p.on ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.2)'};
   }
 `

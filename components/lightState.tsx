@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import update from 'immutability-helper'
+import io from 'socket.io-client'
+import Loading from './Loading'
 
 export const lastColorCount = 4
 const colorTolerance = 50
@@ -31,66 +33,32 @@ export interface LightWithChange extends Light {
   onPersistColor: () => void
 }
 
-const initialData = [{
-  id: 'test1',
-  name: 'Eingang',
-  hue: 10,
-  lightness: 80,
-  power: true,
-  intensity: 100,
-  lastColors: [{
-    hue: 10,
-    lightness: 80,
-  }, {
-    hue: 170,
-    lightness: 60,
-  }],
-}, {
-  id: 'test2',
-  name: 'Coworking',
-  hue: 70,
-  lightness: 50,
-  power: false,
-  intensity: 80,
-  lastColors: [{
-    hue: 363,
-    lightness: 75,
-  }, {
-    hue: 45,
-    lightness: 53,
-  }, {
-    hue: 79,
-    lightness: 64,
-  }],
-}, {
-  id: 'test3',
-  name: 'Factory',
-  hue: 250,
-  lightness: 50,
-  power: false,
-  intensity: 40,
-  lastColors: [{
-    hue: 179,
-    lightness: 49,
-  }, {
-    hue: 283,
-    lightness: 67,
-  }, {
-    hue: 320,
-    lightness: 71,
-  }, {
-    hue: 170,
-    lightness: 100,
-  }],
-}]
-
 export default function connect(Comp: any) {
   return class Wrapper extends Component {
-    public state: { lights: Light[] } = {
-      lights: initialData,
+    public state: { lights: Light[], loading: boolean } = {
+      lights: [],
+      loading: true,
+    }
+
+    private socket: SocketIOClient.Socket | undefined
+
+    public componentWillMount() {
+      this.socket = io({
+        path: '/data',
+      })
+
+      this.socket.on('lights', (lights: Light[]) => {
+        this.setState({ lights, loading: false })
+      })
+    }
+
+    public componentWillUnmount() {
+      const socket = this.socket as SocketIOClient.Socket
+      socket.close()
     }
 
     public render() {
+      if (this.state.loading) return <Loading />
       return (
         // @ts-ignore
         <Comp

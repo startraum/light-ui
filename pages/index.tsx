@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic'
 import * as React from 'react'
 import styled, { createGlobalStyle } from 'styled-components'
+import Loading from '../components/Loading'
 
 const GlobalStyle = createGlobalStyle`
   body, html, #__next {
@@ -29,6 +30,7 @@ const Wrapper = styled.div`
 // @ts-ignore
 const Lights = dynamic(async () => import('../components/Lights'), {
   ssr: false,
+  loading: Loading,
 })
 
 export default () => (
