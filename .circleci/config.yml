@@ -1,0 +1,44 @@
+version: 2
+jobs:
+  docker-build:
+    working_directory: ~/app
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - setup_remote_docker:
+         docker_layer_caching: true
+      - run:
+          name: docker hub login
+          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run:
+          name: register qemu
+          command: docker run --rm --privileged multiarch/qemu-user-static:register --reset
+      - restore_cache:
+          key: npm-packages-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}
+      - run:
+          name: install npm packages
+          command: npm install
+      - save_cache:
+          key: npm-packages-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}
+          paths:
+            - ./node_modules/
+            - ~/.npm/
+      - run:
+          name: linting app
+          command: npm run lint
+      - run:
+          name: building app
+          command: npm run docker-build
+      - run:
+          name: pushing docker image
+          command: npm run docker-push
+workflows:
+  version: 2
+  build:
+    jobs:
+      - docker-build:
+          context: global
+          filters:
+            branches:
+              only: master
