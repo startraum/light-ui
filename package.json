@@ -1,10 +1,12 @@
 {
-  "name": "startlight-frontend",
+  "name": "light-ui",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "nodemon server/index.ts",
     "build": "next build && tsc --project tsconfig.server.json",
+    "docker-build": "npm run build && docker build -t startraum/light-ui:latest .",
+    "docker-push": "docker push startraum/light-ui:latest",
     "start": "NODE_ENV=production node .next/production-server/server/index.js",
     "postinstall": "npm run build",
     "lint": "tslint --project .",
