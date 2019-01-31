@@ -69,7 +69,7 @@ export default function connect(Comp: any) {
     }
 
     private persistColor(index: number) {
-      this.updateLight(index, l => {
+      this.updateLight(index, (l: Light) => {
         const { hue, lightness } = l
         const lastColors = l.lastColors
         let similarIndex: number | undefined
@@ -92,10 +92,18 @@ export default function connect(Comp: any) {
       })
     }
 
-    private updateLight(index: number, change: (light: Light) => Light) {
+    private updateLight(index: number, change: any) {
       this.setState(state => update(state, {
         lights: {
-          [index]: (light: Light) => change(light),
+          [index]: (light: Light) => {
+            if (!this.socket) return
+            const c = change(light)
+            this.socket.emit('update', { id: light.id, update: c })
+            return {
+              ...light,
+              ...c,
+            }
+          },
         },
       }))
     }
@@ -104,8 +112,7 @@ export default function connect(Comp: any) {
       return this.state.lights.map((light, index) => ({
         ...light,
         onPersistColor: () => this.persistColor(index),
-        onChange: (change: Change) => this.updateLight(index, l => ({
-          ...l,
+        onChange: (change: Change) => this.updateLight(index, () => ({
           power: true,
           ...change,
         })),
