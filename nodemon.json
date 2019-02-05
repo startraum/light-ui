@@ -7,6 +7,6 @@
     "tsconfig.server.json"
   ],
   "execMap": {
-    "ts": "ts-node --typeCheck --compilerOptions '{\"module\":\"commonjs\",\"isolatedModules\":false}'"
+    "ts": "ts-node --compiler-options '{\"module\":\"commonjs\",\"isolatedModules\":false}'"
   }
 }
