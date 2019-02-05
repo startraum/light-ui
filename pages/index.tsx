@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic'
 import * as React from 'react'
+import Head from 'next/head'
 import styled, { createGlobalStyle } from 'styled-components'
 import Loading from '../components/Loading'
 
@@ -35,6 +36,14 @@ const Lights = dynamic(async () => import('../components/Lights'), {
 
 export default () => (
   <Wrapper>
+    <Head>
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, shrink-to-fit=no, user-scalable=no"
+      />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <title>Light Control</title>
+    </Head>
     <GlobalStyle />
     <Lights />
   </Wrapper>
