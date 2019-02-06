@@ -180,6 +180,7 @@ export default class Light extends Component<Props, State> {
       power: intensity > 0,
     }
     this.props.onChange(change)
+    if (this.state.colorIndex != null) this.props.onPersistColor(this.state.colorIndex)
   }
 
   private setColor(color: ColorType) {
