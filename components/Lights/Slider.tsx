@@ -1,8 +1,20 @@
 import * as React from 'react'
 import Slider from 'react-input-range'
 import styled from 'styled-components'
+import ease from '../utils/ease'
 
-export default styled(({ className, ...props }) => <div className={className}><Slider {...props } /></div>)`
+export default styled(({ className, ...props }) => (
+  <div className={className}>
+    <Slider
+      {...props }
+      value={ease(props.value, true)}
+      onChange={(val: number) => {
+        console.log('out', val, ease(val), ease(ease(val), true))
+        props.onChange(ease(val))
+      }}
+    />
+  </div>
+))`
   padding: 35px 15px 0;
   margin-bottom: 20px;
 

@@ -103,7 +103,7 @@ export default class Light extends Component<Props, State> {
           />
         </NameWrapper>
         <Slider
-          formatLabel={(value: string) => `${value}%`}
+          formatLabel={(value: string) => `${Math.round(value)}%`}
           minValue={0}
           maxValue={100}
           value={this.props.intensity}
