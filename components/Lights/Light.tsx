@@ -103,7 +103,7 @@ export default class Light extends Component<Props, State> {
           />
         </NameWrapper>
         <Slider
-          formatLabel={(value: string) => `${Math.round(value)}%`}
+          formatLabel={(value: number) => `${Math.round(value)}%`}
           minValue={0}
           maxValue={100}
           value={this.props.intensity}
@@ -126,7 +126,7 @@ export default class Light extends Component<Props, State> {
         </ColorDotContainer>
         {this.props.advanced && (
           <ColorDotContainer>
-            {this.props.colors.map((color, index) => (
+            {(this.props.colors || []).map((color, index) => (
               <ColorDot
                 key={index}
                 active={color && this.isColorActive(color)}

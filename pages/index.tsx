@@ -34,7 +34,14 @@ const Lights = dynamic(async () => import('../components/Lights'), {
   loading: Loading,
 })
 
-export default () => (
+interface Ctx {
+  url: {
+    query: {
+      advanced: any,
+    },
+  },
+}
+export default ({ url: { query: { advanced } } }: Ctx) => (
   <Wrapper>
     <Head>
       <meta
@@ -45,6 +52,6 @@ export default () => (
       <title>Light Control</title>
     </Head>
     <GlobalStyle />
-    <Lights />
+    <Lights advanced={advanced} />
   </Wrapper>
 )

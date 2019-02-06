@@ -79,7 +79,6 @@ export default function connect(Comp: any) {
         // @ts-ignore
         <Comp
           {...this.props}
-          advanced={location.search.indexOf('advanced') > -1}
           lights={this.getLights()}
         />
       )
