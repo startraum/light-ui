@@ -57,6 +57,8 @@ export default function connect(Comp: any) {
     }
 
     private socket: SocketIOClient.Socket | undefined
+    private isEditing = false
+    private editingTimeout: any
 
     public componentWillMount() {
       this.socket = io({
@@ -64,6 +66,7 @@ export default function connect(Comp: any) {
       })
 
       this.socket.on('lights', (lights: Light[]) => {
+        if (this.isEditing) return
         this.setState({ lights, loading: false })
       })
     }
@@ -100,6 +103,9 @@ export default function connect(Comp: any) {
           [index]: (light: Light) => {
             if (!this.socket) return
             const c = change(light)
+            this.isEditing = true
+            clearTimeout(this.editingTimeout)
+            this.editingTimeout = setTimeout(() => this.isEditing = false, 500)
             this.socket.emit('update', { id: light.id, update: c })
             return {
               ...light,
