@@ -36,7 +36,11 @@ const ColorDotContainer = styled.div`
   justify-content: space-between;
   margin: 20px 0;
 `
-const ColorDot = styled.button<{ active: boolean, color?: string, disabled?: boolean, invisible?: boolean }>`
+const ColorDot = styled.button.attrs((p: any) => ({
+  style: {
+    background:  !p.invisible ? p.color || 'rgba(228, 228, 228, .1)' : 'none',
+  },
+}))<{ active: boolean, color?: string, disabled?: boolean, invisible?: boolean }>`
   border-radius: 50%;
   ${p => p.active ? 'border: 5px solid rgba(254, 254, 254, 0.9);' : 'border: 0 solid transparent;'}
   outline: none;
@@ -46,7 +50,6 @@ const ColorDot = styled.button<{ active: boolean, color?: string, disabled?: boo
   box-sizing: border-box;
   transition: border 0.3s;
   cursor: ${p => p.disabled ? 'auto' : 'pointer'};
-  background: ${p => !p.invisible ? p.color || 'rgba(228, 228, 228, .1)' : 'none'};
   box-shadow: ${p => p.invisible ? 'none' : `0px 3px 20px 0 rgba(28, 28, 28, ${p.disabled ? '.1' : '.3'})`};
   -webkit-tap-highlight-color: rgba(0,0,0,0);
 `
