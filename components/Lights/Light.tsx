@@ -4,7 +4,7 @@ import Color from 'color'
 import Power from '../icons/Power'
 import Slider from './Slider'
 import UnstyledColorWheel from './ColorWheel/index'
-import { LightWithChange, Color as ColorType, lastColorCount } from '../lightState'
+import { LightWithChange, Color as ColorType, presetColors } from '../lightState'
 
 const Wrapper = styled.div<{ on: boolean }>`
   opacity: ${p => p.on ? 1 : 0.5};
@@ -23,7 +23,6 @@ const Wrapper = styled.div<{ on: boolean }>`
 const NameWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
 `
 const Name = styled.h2`
   flex: 1;
@@ -35,6 +34,7 @@ const Name = styled.h2`
 const ColorDotContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  margin: 20px 0;
 `
 const ColorDot = styled.button<{ active: boolean, color?: string, disabled?: boolean, invisible?: boolean }>`
   border-radius: 50%;
@@ -76,57 +76,19 @@ const ColorWheelWrapper = styled.div<{ active: boolean }>`
   }
   ${p => p.active && activeStyle};
 `
-let bg: string | undefined
-const getWheelBackgroundImage = (size: number) => {
-  if (bg) return bg
-  const canvas = document.createElement('canvas')
-  canvas.width = size * 2
-  canvas.height = size * 2
-  canvas.style.width = `${size}px`
-  canvas.style.height = `${size}px`
-  const context = canvas.getContext('2d') as CanvasRenderingContext2D
-  context.scale(2, 2)
-  context.scale(2, 2)
-  const x = size / 4 // Canvas center X (divided by 4 because of retina)
-  const y = size / 4 // Canvas center Y (divided by 4 because of retina)
-  const r = x // Canvas radius
-  const d2r = Math.PI / 180 // Degrees to radians
-
-  for (let angle = 0; angle <= 360; angle++) {
-    const arc_start = -((angle + 90) * d2r)
-    const arc_end = -((angle + 88) * d2r)
-
-    // Draw shape
-    context.beginPath()
-    context.moveTo(x, y)
-    context.arc(x, y, r, arc_start, arc_end, false)
-    context.closePath()
-
-    // Generate gradient for shape
-    const gradient = context.createRadialGradient(x, y, 0, x, y, r)
-    gradient.addColorStop(0.002, 'hsl(' + angle + ', 100%, 100%)')
-    gradient.addColorStop(1, 'hsl(' + angle + ', 100%, 50%)')
-
-    context.fillStyle = gradient
-    context.fill()
-  }
-  bg = canvas.toDataURL('image/png', 1)
-  return bg
-}
-
-const ColorWheelButton = styled(props => <ColorDot {...props} />).attrs({
-  disabled: false,
-})`
-  background: url(${getWheelBackgroundImage(50)}) no-repeat;
-  background-size: 100%;
-`
 export interface State {
   colorWheelOpened: boolean,
+  colorIndex?: number
 }
 
-export default class Light extends Component<LightWithChange, State> {
-  public state = {
+interface Props extends LightWithChange {
+  advanced: boolean
+}
+
+export default class Light extends Component<Props, State> {
+  public state: State = {
     colorWheelOpened: false,
+    colorIndex: undefined,
   }
 
   public render() {
@@ -140,7 +102,6 @@ export default class Light extends Component<LightWithChange, State> {
             on={this.props.power}
           />
         </NameWrapper>
-        {this.renderColors()}
         <Slider
           formatLabel={(value: string) => `${value}%`}
           minValue={0}
@@ -148,6 +109,46 @@ export default class Light extends Component<LightWithChange, State> {
           value={this.props.intensity}
           onChange={(intensity: number) => this.setIntensity(intensity)}
         />
+        <ColorDotContainer>
+          {presetColors.map((color, index) => (
+            <ColorDot
+              key={index}
+              active={color && this.isColorActive(color)}
+              color={color ? Color.hsl(color.hue, 100, color.lightness).hex() : ''}
+              disabled={!color}
+              onClick={() => {
+                if (!color) return
+                this.closeWheel(() =>
+                  this.setColor(color))
+              }}
+            />
+          ))}
+        </ColorDotContainer>
+        {this.props.advanced && (
+          <ColorDotContainer>
+            {this.props.colors.map((color, index) => (
+              <ColorDot
+                key={index}
+                active={color && this.isColorActive(color)}
+                color={color ? Color.hsl(color.hue, 100, color.lightness).hex() : ''}
+                disabled={!color}
+                onClick={() => {
+                  if (!color) return
+                  if (!this.isColorActive(color)) {
+                    this.closeWheel(() => {
+                      this.setState({ colorIndex: index })
+                      this.setColor(color)
+                    })
+                  } else if (!this.state.colorWheelOpened) {
+                    this.setState({ colorWheelOpened: true, colorIndex: index })
+                  } else {
+                    this.closeWheel()
+                  }
+                }}
+              />
+            ))}
+          </ColorDotContainer>
+        )}
         <ColorWheelWrapper active={this.state.colorWheelOpened}>
           <ColorWheel
             hue={this.props.hue}
@@ -161,9 +162,8 @@ export default class Light extends Component<LightWithChange, State> {
     )
   }
 
-  private closeWheel() {
-    this.setState({ colorWheelOpened: false })
-    this.props.onPersistColor()
+  private closeWheel(cb?: () => void) {
+    this.setState({ colorWheelOpened: false, colorIndex: undefined }, cb)
   }
 
   private setPower(power: boolean) {
@@ -181,38 +181,10 @@ export default class Light extends Component<LightWithChange, State> {
 
   private setColor(color: ColorType) {
     this.props.onChange(color)
+    if (this.state.colorIndex != null) this.props.onPersistColor(this.state.colorIndex)
   }
 
   private isColorActive(color: { hue: number, lightness: number }) {
     return color.hue === this.props.hue && color.lightness === this.props.lightness
-  }
-
-  private renderColors() {
-    return (
-      <ColorDotContainer>
-        <ColorWheelButton
-          onClick={() => {
-            if (!this.state.colorWheelOpened) {
-              this.setState({ colorWheelOpened: true })
-              return
-            }
-            this.closeWheel()
-          }}
-          active={this.state.colorWheelOpened}
-        />
-        {[...(new Array(lastColorCount)).keys()].map((index: number) => {
-          const color = this.props.lastColors[index]
-          return (
-            <ColorDot
-              key={index}
-              active={color && this.isColorActive(color)}
-              color={color ? Color.hsl(color.hue, 100, color.lightness).hex() : ''}
-              disabled={!color}
-              onClick={color ? () => this.setColor(color) : undefined}
-            />
-          )
-        })}
-      </ColorDotContainer>
-    )
   }
 }

@@ -3,8 +3,23 @@ import update from 'immutability-helper'
 import io from 'socket.io-client'
 import Loading from './Loading'
 
-export const lastColorCount = 4
-const colorTolerance = 50
+export const presetColors: Color[] = [{
+  hue: 0,
+  intensity: 100,
+  lightness: 100,
+}, {
+  hue: 50,
+  intensity: 100,
+  lightness: 90,
+}, {
+  hue: 150,
+  intensity: 75,
+  lightness: 80,
+}, {
+  hue: 327.39,
+  lightness: 50,
+  intensity: 100,
+}]
 
 export interface Change {
   hue?: number
@@ -16,6 +31,7 @@ export interface Change {
 export interface Color {
   hue: number
   lightness: number
+  intensity?: number
 }
 
 export interface Light {
@@ -25,12 +41,12 @@ export interface Light {
   lightness: number
   power: boolean
   intensity: number
-  lastColors: Color[]
+  colors: Color[]
 }
 
 export interface LightWithChange extends Light {
   onChange: (change: Change) => void
-  onPersistColor: () => void
+  onPersistColor: (colorIndex: number) => void
 }
 
 export default function connect(Comp: any) {
@@ -63,32 +79,19 @@ export default function connect(Comp: any) {
         // @ts-ignore
         <Comp
           {...this.props}
+          advanced={location.search.indexOf('advanced') > -1}
           lights={this.getLights()}
         />
       )
     }
 
-    private persistColor(index: number) {
+    private persistColor(index: number, colorIndex: number) {
       this.updateLight(index, (l: Light) => {
-        const { hue, lightness } = l
-        const lastColors = l.lastColors
-        let similarIndex: number | undefined
-        const similarColors = lastColors.filter((c, colorIndex) => {
-          const match = (c.hue + colorTolerance >= hue && c.hue - colorTolerance <= hue) &&
-          (c.lightness + colorTolerance >= lightness && c.lightness - colorTolerance <= lightness)
-          if (match) similarIndex = colorIndex
-          return match
-        })
-        if (similarColors.length <= 0) {
-          lastColors.unshift({ hue: l.hue, lightness: l.lightness })
-        } else if (similarIndex != null) {
-          lastColors[similarIndex] = { hue: l.hue, lightness: l.lightness }
-        }
+        const { hue, lightness, intensity } = l
+        const colors = l.colors
+        colors[colorIndex] = { hue, lightness, intensity }
 
-        return {
-          ...l,
-          lastColors: lastColors.slice(0, lastColorCount + 1),
-        }
+        return { ...l, colors }
       })
     }
 
@@ -111,7 +114,7 @@ export default function connect(Comp: any) {
     private getLights() {
       return this.state.lights.map((light, index) => ({
         ...light,
-        onPersistColor: () => this.persistColor(index),
+        onPersistColor: (colorIndex: number) => this.persistColor(index, colorIndex),
         onChange: (change: Change) => this.updateLight(index, () => ({
           power: true,
           ...change,

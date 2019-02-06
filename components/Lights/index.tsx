@@ -18,9 +18,9 @@ const Placeholder = styled.p`
   text-align: center;
 `
 
-export default connect((props: { lights: LightWithChange[] }) => (
+export default connect((props: { lights: LightWithChange[], advanced: boolean }) => (
   <Section>
     {props.lights.length <= 0 && <Placeholder>no lights available</Placeholder>}
-    {props.lights.map(light => <Light key={light.id} {...light} />)}
+    {props.lights.map(light => <Light advanced={props.advanced} key={light.id} {...light} />)}
   </Section>
 ))

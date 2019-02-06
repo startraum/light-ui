@@ -9,9 +9,9 @@ import getContrastColor from '../../utils/getContrastColor'
 export type CanvasGenerator = (size: number) => HTMLCanvasElement
 const transitionDuration = 400
 
-const BackgroundHelper = styled.div.attrs<{ backgroundUrl: string, rotation: number, active: boolean, animating: boolean }>({
-  style: (p: any) => ({ transform: `translateZ(0) translate3d(0, 0, 0) rotate(${p.rotation + (p.active ? 0 : 360)}deg) scale(${p.active ? 1 : 0})` }),
-})<{ backgroundUrl: string, rotation: number, active: boolean, animating: boolean }>`
+const BackgroundHelper = styled.div.attrs<{ backgroundUrl: string, rotation: number, active: boolean, animating: boolean }>((p: any) => ({
+  style: { transform: `translateZ(0) translate3d(0, 0, 0) rotate(${p.rotation + (p.active ? 0 : 360)}deg) scale(${p.active ? 1 : 0})` },
+}))<{ backgroundUrl: string, rotation: number, active: boolean, animating: boolean }>`
   ${p => p.animating ? `transition-duration: ${transitionDuration - 100}ms;` : ''}
   // transition-duration: ${transitionDuration - 100}ms;
   ${p => p.active && p.animating ? 'transition-delay: 100ms;' : ''}

@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 export default styled(({ className, ...props }) => <div className={className}><Slider {...props } /></div>)`
   padding: 35px 15px 0;
+  margin-bottom: 20px;
 
   .input-range__slider {
     -webkit-tap-highlight-color: rgba(0,0,0,0);

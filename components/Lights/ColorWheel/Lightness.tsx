@@ -12,9 +12,9 @@ const Wrapper: AnyStyledComponent = styled.div<{ size: number }>`
   height: ${p => p.size}px;
   background-color: rgba(64, 64, 64, 0.6);
 `
-const Handle: AnyStyledComponent = styled.div.attrs<{ color: string , size: number, position: number }>({
-  style: (p: any) => ({ top: p.position }),
-})<{ color: string , size: number, position: number }>`
+const Handle: AnyStyledComponent = styled.div.attrs<{ color: string , size: number, position: number }>((p: any) => ({
+  style: { top: p.position },
+}))<{ color: string , size: number, position: number }>`
   height: ${p => p.size}px;
   width: ${p => p.size}px;
   position: absolute;
