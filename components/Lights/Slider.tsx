@@ -9,8 +9,9 @@ export default styled(({ className, ...props }) => (
       {...props }
       value={ease(props.value, true)}
       onChange={(val: number) => {
-        console.log('out', val, ease(val), ease(ease(val), true))
-        props.onChange(ease(val))
+        const eased = ease(val)
+        const outVal = 255 / 100 * eased < 2 && eased > 0 ? 100 / 255 * 2 : eased
+        props.onChange(outVal)
       }}
     />
   </div>
