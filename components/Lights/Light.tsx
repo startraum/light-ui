@@ -55,8 +55,9 @@ const ColorDot = styled.button.attrs((p: any) => ({
 `
 const ColorWheel = styled(UnstyledColorWheel)``
 const activeStyle = css`
-  height: 250px;
-  margin-top: 20px;
+  height: 305px;
+  width: 305px;
+  margin-bottom: 20px;
   opacity: 1;
   pointer-events: all;
   ${ColorWheel} {

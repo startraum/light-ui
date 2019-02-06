@@ -46,10 +46,10 @@ const ChildWrapper = styled.span.attrs<{ color: string, dragging: boolean }>(p =
   cursor: pointer;
   border: 0;
   position: absolute;
-  top: 30%;
-  left: 30%;
-  width: 40%;
-  height: 40%;
+  top: 35%;
+  left: 35%;
+  width: 30%;
+  height: 30%;
   border-radius: 50%;
   overflow: hidden;
   box-shadow: 0px 3px 20px 0 rgba(28, 28, 28, .3);
@@ -86,7 +86,7 @@ interface State {
 
 export default class ColorWheel extends Component<Props, State> {
   public static defaultProps = {
-    size: 250,
+    size: 305,
     lightness: 100,
     generateCanvas(size: number) {
       const canvas = document.createElement('canvas')
@@ -177,7 +177,7 @@ export default class ColorWheel extends Component<Props, State> {
         />
         <Rotate ref={this.rotatorRef} />
         <Lightness
-          size={(this.props.size as number) * 0.3}
+          size={(this.props.size as number) * 0.35}
           onChange={value => this.setColor({ lightness: 50 + (50 / 100 * value) })}
           value={(100 / 50 * (this.props.lightness - 50))}
           color={color || '#fff'}

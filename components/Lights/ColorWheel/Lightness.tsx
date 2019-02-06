@@ -36,6 +36,14 @@ export interface Props {
   onDraggingChange: (dragging: boolean) => void
 }
 
+const preventDefault = (e: Event) => e.preventDefault()
+function disableScroll() {
+  document.body.addEventListener('touchmove', preventDefault, { passive: false })
+}
+function enableScroll() {
+  document.body.removeEventListener('touchmove', preventDefault)
+}
+
 export default class Lightness extends Component<Props> {
   private wrapperRef = React.createRef<AnyStyledComponent>()
   private isDragging = false
@@ -62,6 +70,7 @@ export default class Lightness extends Component<Props> {
 
   private handleStart = () => {
     this.isDragging = true
+    disableScroll()
     this.props.onDraggingChange(true)
     window.addEventListener('touchmove', this.handleTouchMove)
     window.addEventListener('mousemove', this.handleMouseMove)
@@ -92,6 +101,7 @@ export default class Lightness extends Component<Props> {
 
   private handleEnd = () => {
     this.isDragging = false
+    enableScroll()
     this.props.onDraggingChange(false)
     window.removeEventListener('touchmove', this.handleTouchMove)
     window.removeEventListener('mousemove', this.handleMouseMove)
