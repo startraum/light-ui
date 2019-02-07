@@ -33,8 +33,8 @@ const Name = styled.h2`
 `
 const ColorDotContainer = styled.div`
   display: flex;
-  justify-content: space-between;
-  margin: 20px 0;
+  justify-content: space-around;
+  margin: 35px 0;
 `
 const ColorDot = styled.button.attrs((p: any) => ({
   style: {
@@ -45,8 +45,8 @@ const ColorDot = styled.button.attrs((p: any) => ({
   ${p => p.active ? 'border: 5px solid rgba(254, 254, 254, 0.9);' : 'border: 0 solid transparent;'}
   outline: none;
   padding: 0;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   box-sizing: border-box;
   transition: border 0.3s;
   cursor: ${p => p.disabled ? 'auto' : 'pointer'};
