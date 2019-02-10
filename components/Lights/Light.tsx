@@ -155,6 +155,7 @@ export default class Light extends Component<Props, State> {
           formatLabel={(value: number) => `${Math.round(value)}%`}
           minValue={0}
           maxValue={100}
+          disabled={this.props.animation}
           value={this.props.intensity}
           onChange={(intensity: number) => this.setIntensity(intensity)}
         />

@@ -48,10 +48,9 @@ export default styled(({ className, ...props }) => (
   }
 
   .input-range--disabled .input-range__slider {
-    background: rgba(255, 255, 255, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: none;
-    transform: none;
+    background: rgba(175, 175, 175, 1);
+    border: 1px solid rgba(175, 175, 175, 1);
+    pointer-events: none;
   }
 
   .input-range__label {
@@ -99,9 +98,8 @@ export default styled(({ className, ...props }) => (
     position: relative;
   }
 
-  .input-range--disabled .input-range__track {
-    background: rgba(228, 228, 228, .1);
-    box-shadow: 0px 3px 20px 0 rgba(28, 28, 28, .3);
+  .input-range--disabled .input-range__track--active {
+    background: rgba(175, 175, 175, 1);
   }
 
   .input-range__track--background {
