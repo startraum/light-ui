@@ -9,6 +9,7 @@ if (process.env.NODE_ENV !== 'production') {
     lightness: 0,
     intensity: 0,
     power: true,
+    animation: false,
     colors: [{
       hue: 0,
       intensity: 100,

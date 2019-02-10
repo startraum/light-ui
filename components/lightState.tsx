@@ -7,18 +7,17 @@ export const presetColors: Color[] = [{
   hue: 0,
   intensity: 100,
   lightness: 100,
+  colorCode: '#fff8d9',
 }, {
-  hue: 50,
-  intensity: 100,
-  lightness: 90,
+  hue: 130,
+  lightness: 50,
+  intensity: 95,
+  colorCode: 'rgba(102, 204, 153, 1)',
 }, {
-  hue: 150,
-  intensity: 75,
-  lightness: 80,
-}, {
-  hue: 327.39,
+  hue: 356,
   lightness: 50,
   intensity: 100,
+  colorCode: 'rgba(230, 0, 125, 1)',
 }]
 
 export interface Change {
@@ -26,12 +25,14 @@ export interface Change {
   lightness?: number
   power?: boolean
   intensity?: number
+  animation?: boolean
 }
 
 export interface Color {
   hue: number
   lightness: number
   intensity?: number
+  colorCode?: string
 }
 
 export interface Light {
@@ -41,6 +42,7 @@ export interface Light {
   lightness: number
   power: boolean
   intensity: number
+  animation: boolean
   colors: Color[]
 }
 
@@ -97,7 +99,7 @@ export default function connect(Comp: any) {
       })
     }
 
-    private updateLight(index: number, change: any) {
+    private updateLight(index: number, change: (light: Light) => any) {
       this.setState(state => update(state, {
         lights: {
           [index]: (light: Light) => {
@@ -120,8 +122,10 @@ export default function connect(Comp: any) {
       return this.state.lights.map((light, index) => ({
         ...light,
         onPersistColor: (colorIndex: number) => this.persistColor(index, colorIndex),
-        onChange: (change: Change) => this.updateLight(index, () => ({
+        onChange: (change: Change) => this.updateLight(index, oldLight => ({
           power: true,
+          animation: false,
+          intensity: oldLight.intensity <= 0 && change.power !== false ? 100 : oldLight.intensity,
           ...change,
         })),
       }))

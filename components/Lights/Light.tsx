@@ -1,10 +1,20 @@
 import React, { Component } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import Color from 'color'
 import Power from '../icons/Power'
+import Animation from '../icons/Animation'
 import Slider from './Slider'
 import UnstyledColorWheel from './ColorWheel/index'
 import { LightWithChange, Color as ColorType, presetColors } from '../lightState'
+
+const gradientAnimation = keyframes`
+  0% {
+    background-position: 0%;
+  }
+  100% {
+    background-position: 200%;
+  }
+`
 
 const Wrapper = styled.div<{ on: boolean }>`
   opacity: ${p => p.on ? 1 : 0.5};
@@ -42,7 +52,7 @@ const ColorDot = styled.button.attrs((p: any) => ({
   },
 }))<{ active: boolean, color?: string, disabled?: boolean, invisible?: boolean }>`
   border-radius: 50%;
-  ${p => p.active ? 'border: 5px solid rgba(254, 254, 254, 0.9);' : 'border: 0 solid transparent;'}
+  ${p => p.active ? `border: 5px solid ${p.color === '#fff' ? 'rgba(42, 42, 42, 0.4)' : 'rgba(254, 254, 254, 0.9)'};` : 'border: 0 solid transparent;'}
   outline: none;
   padding: 0;
   width: 60px;
@@ -53,6 +63,42 @@ const ColorDot = styled.button.attrs((p: any) => ({
   box-shadow: ${p => p.invisible ? 'none' : `0px 3px 20px 0 rgba(28, 28, 28, ${p.disabled ? '.1' : '.3'})`};
   -webkit-tap-highlight-color: rgba(0,0,0,0);
 `
+const AnimWrap = styled.div`
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to right, rgba(102,204,153,1) 12.5%,rgba(230,0,125,1) 47.5%, rgba(230,0,125,1) 52.5%, rgba(102,204,153,1) 88.5%);
+  background-size: 200%;
+`
+const animateGradient = css`
+  animation: ${gradientAnimation} 2.4s linear infinite;
+`
+const AnimationTrigger = styled.button.attrs<{ active: boolean }>(p => ({
+  children: <AnimWrap><Animation on={p.active} size={25} /></AnimWrap>,
+}))<{ active: boolean }>`
+  border-radius: 50%;
+  ${p => p.active ? 'border: 5px solid rgba(254, 254, 254, 0.9);' : 'border: 0 solid transparent;'}
+  outline: none;
+  padding: 0;
+  width: 60px;
+  height: 60px;
+  box-sizing: border-box;
+  transition: border 0.3s;
+  overflow: hidden;
+  cursor: ${p => p.disabled ? 'auto' : 'pointer'};
+  box-shadow: ${p => `0px 3px 20px 0 rgba(28, 28, 28, ${p.disabled ? '.1' : '.3'})`};
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  ${Animation} {
+    margin-top: 2px;
+    padding-left: 1px;
+  }
+  ${AnimWrap} {
+    ${p => p.active ? animateGradient : 'animation: none;'};
+  }
+`
+
 const ColorWheel = styled(UnstyledColorWheel)``
 const activeStyle = css`
   height: 305px;
@@ -113,11 +159,15 @@ export default class Light extends Component<Props, State> {
           onChange={(intensity: number) => this.setIntensity(intensity)}
         />
         <ColorDotContainer>
+          <AnimationTrigger
+            active={this.props.animation}
+            onClick={() => this.props.onChange({ animation: !this.props.animation })}
+          />
           {presetColors.map((color, index) => (
             <ColorDot
               key={index}
               active={color && this.isColorActive(color)}
-              color={color ? Color.hsl(color.hue, 100, color.lightness).hex() : ''}
+              color={color ? color.colorCode || Color.hsl(color.hue, 100, color.lightness).hex() : ''}
               disabled={!color}
               onClick={() => {
                 if (!color) return
@@ -133,7 +183,7 @@ export default class Light extends Component<Props, State> {
               <ColorDot
                 key={index}
                 active={color && this.isColorActive(color)}
-                color={color ? Color.hsl(color.hue, 100, color.lightness).hex() : ''}
+                color={color ? color.colorCode || Color.hsl(color.hue, 100, color.lightness).hex() : ''}
                 disabled={!color}
                 onClick={() => {
                   if (!color) return
