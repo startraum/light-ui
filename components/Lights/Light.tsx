@@ -239,6 +239,6 @@ export default class Light extends Component<Props, State> {
   }
 
   private isColorActive(color: { hue: number, lightness: number }) {
-    return color.hue === this.props.hue && color.lightness === this.props.lightness
+    return !this.props.animation && color.hue === this.props.hue && color.lightness === this.props.lightness
   }
 }
