@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import Light from './Light'
 import connect, { LightWithChange } from '../lightState'
+import Credits from '../Credits'
 
 const Section = styled.section`
   display: flex;
@@ -9,6 +10,9 @@ const Section = styled.section`
   justify-content: space-evenly;
   flex-wrap: wrap;
   min-height: 100%;
+  position: relative;
+  padding-bottom: 15px;
+  box-sizing: border-box;
 `
 const Placeholder = styled.p`
   color: rgba(230,230,230,.3);
@@ -22,5 +26,6 @@ export default connect((props: { lights: LightWithChange[], advanced: boolean })
   <Section>
     {props.lights.length <= 0 && <Placeholder>no lights available</Placeholder>}
     {props.lights.map(light => <Light advanced={props.advanced} key={light.id} {...light} />)}
+    <Credits />
   </Section>
 ))
