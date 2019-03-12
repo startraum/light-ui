@@ -52,6 +52,6 @@ export default ({ url: { query: { advanced } } }: Ctx) => (
       <title>Light Control</title>
     </Head>
     <GlobalStyle />
-    <Lights advanced={advanced} />
+    <Lights advanced />
   </Wrapper>
 )
