@@ -38,10 +38,11 @@ interface Ctx {
   url: {
     query: {
       advanced: any,
+      admin: any,
     },
   },
 }
-export default ({ url: { query: { advanced } } }: Ctx) => (
+export default ({ url: { query: { admin } } }: Ctx) => (
   <Wrapper>
     <Head>
       <meta
@@ -52,6 +53,6 @@ export default ({ url: { query: { advanced } } }: Ctx) => (
       <title>Light Control</title>
     </Head>
     <GlobalStyle />
-    <Lights advanced />
+    <Lights advanced admin={!!admin} />
   </Wrapper>
 )

@@ -1,10 +1,19 @@
-import { Light } from '../components/lightState'
+import { Light, Color } from '../components/lightState'
+
+export interface LightUpdate {
+  hue?: number
+  lightness?: number
+  power?: boolean
+  intensity?: number
+  lastColors?: Color[]
+}
 
 const lights: { [key: string]: Light } = {}
 if (process.env.NODE_ENV !== 'production') {
   lights.default = {
     name: 'default',
     id: 'default',
+    locked: false,
     hue: 0,
     lightness: 0,
     intensity: 0,
@@ -36,6 +45,10 @@ export function getLights() {
 
 export function getLight(id: string) {
   return lights[id]
+}
+
+export function patchLight(id: string, update: LightUpdate) {
+  lights[id] = { ...lights[id], ...update }
 }
 
 export function updateLight(light: Light) {

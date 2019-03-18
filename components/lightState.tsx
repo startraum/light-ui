@@ -26,6 +26,7 @@ export interface Change {
   power?: boolean
   intensity?: number
   animation?: boolean
+  locked?: boolean
 }
 
 export interface Color {
@@ -43,6 +44,7 @@ export interface Light {
   power: boolean
   intensity: number
   animation: boolean
+  locked: boolean
   colors: Color[]
 }
 
@@ -52,7 +54,7 @@ export interface LightWithChange extends Light {
 }
 
 export default function connect(Comp: any) {
-  return class Wrapper extends Component {
+  return class Wrapper extends Component<{ admin: boolean }> {
     public state: { lights: Light[], loading: boolean } = {
       lights: [],
       loading: true,
@@ -122,12 +124,15 @@ export default function connect(Comp: any) {
       return this.state.lights.map((light, index) => ({
         ...light,
         onPersistColor: (colorIndex: number) => this.persistColor(index, colorIndex),
-        onChange: (change: Change) => this.updateLight(index, oldLight => ({
-          power: true,
-          animation: false,
-          intensity: oldLight.intensity <= 0 && change.power !== false ? 100 : oldLight.intensity,
-          ...change,
-        })),
+        onChange: (change: Change) => {
+          if (light.locked && !this.props.admin) return
+          this.updateLight(index, oldLight => ({
+            power: true,
+            animation: false,
+            intensity: oldLight.intensity <= 0 && change.power !== false ? 100 : oldLight.intensity,
+            ...change,
+          }))
+        },
       }))
     }
   }

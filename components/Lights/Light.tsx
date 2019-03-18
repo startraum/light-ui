@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import Color from 'color'
 import Power from '../icons/Power'
+import Lock from '../icons/Lock'
 import Animation from '../icons/Animation'
 import Slider from './Slider'
 import UnstyledColorWheel from './ColorWheel/index'
@@ -16,8 +17,9 @@ const gradientAnimation = keyframes`
   }
 `
 
-const Wrapper = styled.div<{ on: boolean }>`
-  opacity: ${p => p.on ? 1 : 0.5};
+const Wrapper = styled.div<{ on: boolean, sealed: boolean }>`
+  opacity: ${p => p.on && !p.sealed ? 1 : 0.5};
+  pointer-events: ${p => p.sealed ? 'none' : 'all'};
   transition-duration: .3s;
   width: 100%;
   padding: 20px 20px 20px;
@@ -132,6 +134,7 @@ export interface State {
 
 interface Props extends LightWithChange {
   advanced: boolean
+  admin: boolean
 }
 
 export default class Light extends Component<Props, State> {
@@ -142,9 +145,16 @@ export default class Light extends Component<Props, State> {
 
   public render() {
     return (
-      <Wrapper on={this.props.power}>
+      <Wrapper on={this.props.power} sealed={this.props.locked && !this.props.admin}>
         <NameWrapper>
           <Name>{this.props.name}</Name>
+          {this.props.admin && (
+            <Lock
+              size={50}
+              onClick={() => this.setLocked(!this.props.locked)}
+              locked={this.props.locked}
+            />
+          )}
           <Power
             size={50}
             onClick={() => this.setPower(!this.props.power)}
@@ -221,8 +231,11 @@ export default class Light extends Component<Props, State> {
   }
 
   private setPower(power: boolean) {
-    const change = { power }
-    this.props.onChange(change)
+    this.props.onChange({ power })
+  }
+
+  private setLocked(locked: boolean) {
+    this.props.onChange({ locked })
   }
 
   private setIntensity(intensity: number) {

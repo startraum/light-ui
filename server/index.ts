@@ -1,15 +1,7 @@
-import { Light, Color } from '../components/lightState'
+import { Light } from '../components/lightState'
 import { Publisher, Subscriber } from 'cote'
 import io from './socketio'
-import { updateLight, getLights } from './lights'
-
-interface LightUpdate {
-  hue?: number
-  lightness?: number
-  power?: boolean
-  intensity?: number
-  lastColors?: Color[]
-}
+import { updateLight, patchLight, getLights, LightUpdate } from './lights'
 
 interface LightEvent extends Event {
   light: Light
@@ -34,6 +26,7 @@ io.on('connection', socket => {
 
   socket.on('update', ({ id, update }: { id: string, update: LightUpdate }) => {
     console.log('control', id, update)
+    patchLight(id, update)
     // @ts-ignore
     publisher.publish<LightUpdateEvent>('update', { id, update })
   })
