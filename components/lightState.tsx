@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import update from 'immutability-helper'
 import io from 'socket.io-client'
+import { parse } from 'cookie'
 import Loading from './Loading'
 
 export const presetColors: Color[] = [{
@@ -54,6 +55,7 @@ export interface LightWithChange extends Light {
 }
 
 export default function connect(Comp: any) {
+  const { accessToken } = parse(document.cookie)
   return class Wrapper extends Component<{ admin: boolean }> {
     public state: { lights: Light[], loading: boolean } = {
       lights: [],
@@ -87,6 +89,7 @@ export default function connect(Comp: any) {
         <Comp
           {...this.props}
           lights={this.getLights()}
+          accessToken={accessToken}
         />
       )
     }

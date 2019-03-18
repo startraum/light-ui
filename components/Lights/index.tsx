@@ -22,10 +22,11 @@ const Placeholder = styled.p`
   text-align: center;
 `
 
-export default connect((props: { lights: LightWithChange[], advanced: boolean, admin: boolean }) => (
+export default connect((props: { lights: LightWithChange[], advanced: boolean, admin: boolean, accessToken: string }) => (
   <Section>
-    {props.lights.length <= 0 && <Placeholder>no lights available</Placeholder>}
-    {props.lights.map(light => <Light advanced={props.advanced} admin={props.admin} key={light.id} {...light} />)}
+    {!props.accessToken && <Placeholder>Access expired. Please scan the QR-Code again …</Placeholder>}
+    {props.accessToken && props.lights.length <= 0 && <Placeholder>no lights available</Placeholder>}
+    {props.accessToken && props.lights.map(light => <Light advanced={props.advanced} admin={props.admin} key={light.id} {...light} />)}
     <Credits />
   </Section>
 ))

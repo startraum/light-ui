@@ -1,6 +1,7 @@
 import { createServer } from 'http'
 import { parse } from 'url'
 import next from 'next'
+import generateAccessToken from './generateAccessToken'
 
 const port = parseInt(process.env.PORT || '3000', 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
@@ -8,6 +9,13 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 const server = createServer((req, res) => {
+  if (req.url === '/') {
+    return generateAccessToken(res, new Date(new Date().getTime() + (15 * 60 * 1000)))
+  }
+  if (req.url === (process.env.ACCESS_URL || '/member-access')) {
+    return generateAccessToken(res)
+  }
+
   const parsedUrl = parse(req.url || '', true)
   handle(req, res, parsedUrl)
 })
