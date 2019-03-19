@@ -4,13 +4,12 @@
   "scripts": {
     "dev": "nodemon server/index.ts",
     "build": "next build && tsc --project tsconfig.server.json",
-    "docker-build": "npm run build && docker build -t startraum/light-ui:latest .",
+    "docker-build": "docker build -t startraum/light-ui:latest .",
     "docker-push": "docker push startraum/light-ui:latest",
     "start": "NODE_ENV=production node .next/production-server/server/index.js",
     "postinstall": "npm run build",
     "lint": "tslint --project .",
-    "type-check": "tsc",
-    "now-deploy": "now"
+    "type-check": "tsc"
   },
   "devDependencies": {
     "@types/bezier-easing": "^2.0.0",
@@ -29,7 +28,6 @@
     "@types/styled-components": "^4.1.6",
     "babel-eslint": "^9.0.0",
     "nodemon": "^1.18.9",
-    "now": "^13.1.2",
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
     "typescript": "^3.2.4"

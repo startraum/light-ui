@@ -1,13 +1,22 @@
-FROM hypriot/rpi-node:latest
+FROM node as build
+WORKDIR /app
+COPY . .
+RUN npm install
+RUN npm run lint
+RUN npm run build
+
+FROM arm32v7/node
 
 EXPOSE 3000
 
 ENV NODE_ENV production
 
+RUN apt update && apt install bash
+
 WORKDIR /app
-ADD package.json package.json
-ADD package-lock.json package-lock.json
+COPY --from=build /app/package.json /app/package.json
+COPY --from=build /app/package-lock.json /app/package-lock.json
 RUN npm install --production
-ADD .next .next
+COPY --from=build /app/.next /app/.next
 
 CMD ["npm", "start"]
