@@ -9,11 +9,17 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 const server = createServer((req, res) => {
-  if (req.url === '/') {
+  if (req.url === (process.env.LIMITED_ACCESS_URL || '/guest-access')) {
     return generateAccessToken(res, new Date(new Date().getTime() + (15 * 60 * 1000)))
   }
   if (req.url === (process.env.ACCESS_URL || '/member-access')) {
     return generateAccessToken(res)
+  }
+  if (req.url === '/') {
+    res.setHeader('location', '/light')
+    res.statusCode = 302
+    res.end()
+    return
   }
 
   const parsedUrl = parse(req.url || '', true)
