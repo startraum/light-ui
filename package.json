@@ -4,8 +4,9 @@
   "scripts": {
     "dev": "nodemon server/index.ts",
     "build": "next build && tsc --project tsconfig.server.json",
-    "docker-build": "docker build -t startraum/light-ui:latest .",
-    "docker-push": "docker push startraum/light-ui:latest",
+    "docker-build": "docker build -t startraum/light-ui:latest . && docker build -f Dockerfile.arm -t startraum/light-ui:arm .",
+    "docker-push": "docker push startraum/light-ui:latest && docker push startraum/light-ui:arm",
+    "release": "npm run docker-build && npm run docker-push",
     "start": "NODE_ENV=production node .next/production-server/server/index.js",
     "postinstall": "npm run build",
     "lint": "tslint --project .",
