@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import Color from 'color'
+import GA from 'react-ga'
 import Power from '../icons/Power'
 import Lock from '../icons/Lock'
 import Animation from '../icons/Animation'
@@ -204,6 +205,10 @@ export default class Light extends Component<Props, State> {
                       this.setColor(color)
                     })
                   } else if (!this.state.colorWheelOpened) {
+                    GA.event({
+                      category: 'Light',
+                      action: 'Opened wheel',
+                    })
                     this.setState({ colorWheelOpened: true, colorIndex: index })
                   } else {
                     this.closeWheel()
@@ -227,18 +232,37 @@ export default class Light extends Component<Props, State> {
   }
 
   private closeWheel(cb?: () => void) {
+    GA.event({
+      category: 'Light',
+      action: 'Closed wheel',
+    })
     this.setState({ colorWheelOpened: false, colorIndex: undefined }, cb)
   }
 
   private setPower(power: boolean) {
+    GA.event({
+      category: 'Light',
+      action: 'Set power',
+      value: power ? 1 : 0,
+    })
     this.props.onChange({ power })
   }
 
   private setLocked(locked: boolean) {
+    GA.event({
+      category: 'Light',
+      action: 'Set locked',
+      value: locked ? 1 : 0,
+    })
     this.props.onChange({ locked })
   }
 
   private setIntensity(intensity: number) {
+    GA.event({
+      category: 'Light',
+      action: 'Set intensity',
+      value: intensity,
+    })
     const change = {
       intensity,
       power: intensity > 0,
@@ -248,6 +272,10 @@ export default class Light extends Component<Props, State> {
   }
 
   private setColor(color: ColorType) {
+    GA.event({
+      category: 'Light',
+      action: 'Set color',
+    })
     this.props.onChange(color)
     if (this.state.colorIndex != null) this.props.onPersistColor(this.state.colorIndex)
   }

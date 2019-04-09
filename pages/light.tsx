@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic'
 import * as React from 'react'
+import GA from 'react-ga'
 import Head from 'next/head'
 import styled, { createGlobalStyle } from 'styled-components'
 import Loading from '../components/Loading'
@@ -27,6 +28,12 @@ const Wrapper = styled.div`
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 `
+
+GA.initialize([{
+  trackingId: 'UA-108452440-2',
+}])
+GA.set({ anonymizeIp: true })
+GA.pageview(window.location.pathname + window.location.search)
 
 // @ts-ignore
 const Lights = dynamic(async () => import('../components/Lights'), {
