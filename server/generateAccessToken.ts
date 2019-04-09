@@ -6,8 +6,8 @@ function randomId() {
 }
 
 export default (res: ServerResponse, expires?: Date) => {
-  const cookie = serialize('accessToken', randomId() , { expires })
-  res.setHeader('set-cookie', cookie)
+  res.setHeader('set-cookie', serialize('accessToken', randomId() , { expires }))
+  if (expires) res.setHeader('set-cookie', serialize('guest', '1' , { expires }))
   res.setHeader('location', '/light')
   res.statusCode = 302
   res.end()
