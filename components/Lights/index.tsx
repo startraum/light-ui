@@ -1,4 +1,5 @@
 import React from 'react'
+import GA from 'react-ga'
 import styled from 'styled-components'
 import Light from './Light'
 import connect, { LightWithChange } from '../lightState'
@@ -21,6 +22,12 @@ const Placeholder = styled.p`
   font-size: 50px;
   text-align: center;
 `
+
+GA.initialize([{
+  trackingId: 'UA-108452440-2',
+}])
+GA.set({ anonymizeIp: true })
+GA.pageview(window.location.pathname + window.location.search)
 
 export default connect((props: { lights: LightWithChange[], advanced: boolean, admin: boolean, accessToken: string }) => (
   <Section>
