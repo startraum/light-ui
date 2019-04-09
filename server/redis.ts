@@ -28,6 +28,6 @@ export function subscribe(fn: (light: Light) => void) {
 }
 
 const p = promisify(publisher.publish.bind(publisher))
-export function publish({ id, update }: { id: string, update: LightUpdate }) {
+export async function publish({ id, update }: { id: string, update: LightUpdate }) {
   return p('update-light', JSON.stringify({ id, update }))
 }
