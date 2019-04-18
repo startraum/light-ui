@@ -55,7 +55,8 @@ export interface LightWithChange extends Light {
 }
 
 export default function connect(Comp: any) {
-  const { accessToken } = parse(document.cookie)
+  const cookie = parse(document.cookie)
+  const accessToken = cookie[`accessToken-${process.env.ACCESS_TOKEN_SUFFIX}`]
   return class Wrapper extends Component<{ admin: boolean }> {
     public state: { lights: Light[], loading: boolean } = {
       lights: [],

@@ -1,3 +1,4 @@
+import './env'
 import { subscribe, publish } from './redis'
 import io from './socketio'
 import { updateLight, patchLight, getLights, LightUpdate } from './lights'
