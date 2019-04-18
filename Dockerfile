@@ -12,6 +12,7 @@ FROM node:alpine
 EXPOSE 3000
 
 ENV NODE_ENV production
+ENV ACCESS_TOKEN_SUFFIX fMvxB7ek24dM
 
 WORKDIR /app
 COPY --from=build /app/package.json /app/package.json
