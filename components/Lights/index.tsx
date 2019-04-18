@@ -33,7 +33,15 @@ export default connect((props: { lights: LightWithChange[], advanced: boolean, a
   <Section>
     {!props.accessToken && <Placeholder>Access expired. Please scan the QR-Code again …</Placeholder>}
     {props.accessToken && props.lights.length <= 0 && <Placeholder>no lights available</Placeholder>}
-    {props.accessToken && props.lights.map(light => <Light advanced={props.advanced} admin={props.admin} key={light.id} {...light} />)}
+    {props.accessToken && props.lights.map(light => (
+      <Light
+        offline={Date.now() - light.lastUpdate >= parseInt(process.env.OFFLINE_TIME_THRESHOLD || '600000', 10)}
+        advanced={props.advanced}
+        admin={props.admin}
+        key={light.id}
+        {...light}
+      />
+    ))}
     <Credits />
   </Section>
 ))

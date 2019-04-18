@@ -18,6 +18,22 @@ const gradientAnimation = keyframes`
   }
 `
 
+const Offline = styled.div.attrs({ children: 'Offline' })`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 75px;
+  font-weight: 500;
+  color: #fff;
+  background-color: rgba(0,0,0,0.2);
+  text-shadow: 0px 0px 14px #888;
+`
+
 const Wrapper = styled.div<{ on: boolean, sealed: boolean }>`
   opacity: ${p => p.on && !p.sealed ? 1 : 0.5};
   pointer-events: ${p => p.sealed ? 'none' : 'all'};
@@ -32,6 +48,7 @@ const Wrapper = styled.div<{ on: boolean, sealed: boolean }>`
   position: relative;
   box-sizing: border-box;
   overflow: hidden;
+  position: relative;
 `
 const NameWrapper = styled.div`
   display: flex;
@@ -136,6 +153,7 @@ export interface State {
 interface Props extends LightWithChange {
   advanced: boolean
   admin: boolean
+  offline: boolean
 }
 
 export default class Light extends Component<Props, State> {
@@ -146,7 +164,8 @@ export default class Light extends Component<Props, State> {
 
   public render() {
     return (
-      <Wrapper on={this.props.power} sealed={this.props.locked && !this.props.admin}>
+      <Wrapper on={this.props.power} sealed={(this.props.locked && !this.props.admin) || this.props.offline}>
+        {this.props.offline && <Offline />}
         <NameWrapper>
           <Name>{this.props.name}</Name>
           {this.props.admin && (

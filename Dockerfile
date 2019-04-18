@@ -12,12 +12,12 @@ FROM node:alpine
 EXPOSE 3000
 
 ENV NODE_ENV production
-ENV ACCESS_TOKEN_SUFFIX fMvxB7ek24dM
 
 WORKDIR /app
 COPY --from=build /app/package.json /app/package.json
 COPY --from=build /app/package-lock.json /app/package-lock.json
 RUN npm install --production
 COPY --from=build /app/.next /app/.next
+COPY --from=build /app/.env /app/.env
 
 CMD ["npm", "start"]

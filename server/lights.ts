@@ -36,6 +36,7 @@ if (process.env.NODE_ENV !== 'production') {
       lightness: 50,
       intensity: 100,
     }],
+    lastUpdate: Date.now(),
   }
 }
 
@@ -48,7 +49,7 @@ export function getLight(id: string) {
 }
 
 export function patchLight(id: string, update: LightUpdate) {
-  lights[id] = { ...lights[id], ...update }
+  lights[id] = { ...lights[id], ...update, lastUpdate: Date.now() }
 }
 
 export function updateLight(light: Light) {

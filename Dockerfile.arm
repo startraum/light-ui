@@ -18,5 +18,6 @@ COPY --from=build /app/package.json /app/package.json
 COPY --from=build /app/package-lock.json /app/package-lock.json
 RUN npm install --production
 COPY --from=build /app/.next /app/.next
+COPY --from=build /app/.env /app/.env
 
 CMD ["npm", "start"]

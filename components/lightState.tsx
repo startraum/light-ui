@@ -47,6 +47,7 @@ export interface Light {
   animation: boolean
   locked: boolean
   colors: Color[]
+  lastUpdate: number
 }
 
 export interface LightWithChange extends Light {
