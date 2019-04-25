@@ -13,7 +13,7 @@ const GlobalStyle = createGlobalStyle`
     left: 0;
     margin: 0;
     padding: 0;
-    font-family: Helvetica Neue;
+    font-family: Helvetica Neue, Segoe UI;
     overflow: hidden;
     color: rgba(254, 254, 254, 0.87);
     user-select: none;
